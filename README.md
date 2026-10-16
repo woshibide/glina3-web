@@ -31,6 +31,7 @@ The Panel keeps working, and logged-in Panel users see the real site, so content
 Locally, `site/config/config.127.0.0.1.php` turns the option off; the page is still at http://127.0.0.1:8000/coming-soon (debug only).
 Email, phone, and address come from the site fields in the Panel.
 The notice is a one-column card over the cup from the tool, which turns behind it in a full-window canvas (`src/coming-soon.js`, styles at the end of `src/styles/main.css`).
+The page is always light, on the tool's off-white (`--cup-ground`), whatever the system theme.
 On wide screens the page fits one screen and does not scroll; on phones the card scrolls away and leaves only the cup.
 Without WebGL the page shows the card alone.
 To launch the full site, set the option to `false` (or remove it with the routes) on `main`.

@@ -6,6 +6,8 @@
   --tile: light-dark(#f4f4f4, #1a1a1a);
   --ink: light-dark(#111111, #ececec);
   --paper: #f4f4f4;
+  /* Off-white behind the cup tool, the same in light and dark. */
+  --cup-ground: #f8f9fa;
   --muted: 0.4;
   --gap: 10px;
   /* Spacing scale: use these instead of multiplying --gap.
@@ -177,7 +179,12 @@ a {
 }
 
 /* Coming-soon page (site/templates/coming-soon.php): a one-column card over the turning cup (src/coming-soon.js).
-   Wide screens get one screen without scrolling; on phones the card scrolls away and leaves the cup alone. */
+   Wide screens get one screen without scrolling; on phones the card scrolls away and leaves the cup alone.
+   The page is always light (data-theme="light" on html) and sits on the tool's off-white. */
+.coming-soon-page {
+  background: var(--cup-ground);
+}
+
 .coming-soon-cup {
   position: fixed;
   top: 0;

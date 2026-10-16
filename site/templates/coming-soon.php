@@ -1,6 +1,6 @@
 <?php /* Shown on every URL while the glina.comingSoon option is on (see site/config/config.php). Plain HTML, no Vue; src/coming-soon.js turns the cup behind the notice. */ ?>
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
