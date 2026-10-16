@@ -13,8 +13,10 @@ export default defineConfig(({ mode }) => ({
     outDir: "../dist",
     emptyOutDir: true,
     assetsDir: "assets",
+    // The coming-soon page's cup bundles three.js, about 600 kB minified, loaded on that page only.
+    chunkSizeWarningLimit: 1000,
     rolldownOptions: {
-      input: ["src/main.js", "src/styles/main.css"].map((file) => fileURLToPath(new URL(file, import.meta.url))),
+      input: ["src/main.js", "src/coming-soon.js", "src/styles/main.css"].map((file) => fileURLToPath(new URL(file, import.meta.url))),
     },
   },
   plugins: [

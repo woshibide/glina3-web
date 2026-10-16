@@ -30,6 +30,10 @@ While the `glina.comingSoon` option is `true` (in `site/config/config.php`), eve
 The Panel keeps working, and logged-in Panel users see the real site, so content can be prepared on the live server.
 Locally, `site/config/config.127.0.0.1.php` turns the option off; the page is still at http://127.0.0.1:8000/coming-soon (debug only).
 Email, phone, and address come from the site fields in the Panel.
+The notice is a one-column card over the cup from the tool, which turns behind it in a full-window canvas (`src/coming-soon.js`, styles at the end of `src/styles/main.css`).
+The page is always light, on the tool's off-white (`--cup-ground`), whatever the system theme.
+On wide screens the page fits one screen and does not scroll; on phones the card scrolls away and leaves only the cup.
+Without WebGL the page shows the card alone.
 To launch the full site, set the option to `false` (or remove it with the routes) on `main`.
 
 ## Local Panel account
@@ -51,9 +55,14 @@ Never use these credentials on a public server.
   Keep the server markup in the template and `App.vue` in step; the server copy is what crawlers and no-JS visitors see.
 - `vite.config.js` uses `vite-plugin-kirby`, which writes `site/config/vite.config.php` and a `.dev` flag file.
   With `.dev` present Kirby loads assets from Vite; without it, from `dist/` via the manifest.
+- The tool is an npm workspace (`"workspaces": ["tool"]` in `package.json`), so `npm install` here also installs its dependencies and links it as the package `glina-cup-tool`.
+  Pages import it by that name; Vite builds it into `dist/` with the rest.
 - `site/config/config.127.0.0.1.php` turns on Kirby debug for local development only.
 - `src/styles/main.css` holds the base tokens from the design study; expect them to change.
   The template links it directly (not through `main.js`), so pages are styled before any script runs.
+- Spacing: `--gap` (10px) is the board grid; everything else uses the scale in `:root` of `main.css`.
+  `--space-text` is 1em; `--space-xs` to `--space-xl` follow the window width (2, 4, 8, 16, and 32 gaps on a 1440 px window), so proportions hold at every width.
+  Write `var(--space-xl)`, never `calc(var(--gap) * n)`; change sizes in that one place.
 - Page transitions are cross-document view transitions (`@view-transition` in `main.css`): a short crossfade on same-site links, off under reduced motion, instant in browsers without support.
 - Colour theme: light, system, or dark, chosen in the top bar (`src/components/ThemeSwitch.vue`, server copy in `site/snippets/theme-switch.php`, icons in `src/icons/`).
   The choice is stored in `localStorage` and applied by an inline script in the `<head>` before first paint; colours use `light-dark()`.
@@ -134,5 +143,5 @@ Start the tool on another one: `npm run start -- --port 4173` in `../tool`.
 
 ## Deploy
 
-Run `composer install --no-dev` and `npm ci && npm run build`, then upload everything except `node_modules/` and `tool/`.
+Build from a clone with the `tool/` submodule checked out (the build bundles it): run `composer install --no-dev` and `npm ci && npm run build`, then upload everything except `node_modules/` and `tool/`.
 A Kirby license is required on a public domain.

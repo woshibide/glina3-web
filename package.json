@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "tool"
+  ],
   "dependencies": {
+    "glina-cup-tool": "*",
     "vue": "3.5.44"
   },
   "devDependencies": {

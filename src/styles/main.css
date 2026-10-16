@@ -6,8 +6,22 @@
   --tile: light-dark(#f4f4f4, #1a1a1a);
   --ink: light-dark(#111111, #ececec);
   --paper: #f4f4f4;
+  /* Off-white behind the cup tool, the same in light and dark. */
+  --cup-ground: #f8f9fa;
   --muted: 0.4;
   --gap: 10px;
+  /* Spacing scale: use these instead of multiplying --gap.
+     --gap above stays a fixed 10px: the board's grid (between tiles, tile padding, page inset).
+     Text spacing follows the type size (em).
+     Layout spacing follows the window width (vw), so it keeps the same proportion at every width;
+     one unit is --gap on a 1440 px wide window, and each step doubles. */
+  --space-text: 1em;
+  --space-unit: calc(100vw * 10 / 1440);
+  --space-xs: calc(var(--space-unit) * 2);
+  --space-s: calc(var(--space-unit) * 4);
+  --space-m: calc(var(--space-unit) * 8);
+  --space-l: calc(var(--space-unit) * 16);
+  --space-xl: calc(var(--space-unit) * 32);
   --radius-tile: 8px;
   --radius-button: 4px;
   --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -117,7 +131,7 @@ a {
 }
 
 .text > * + * {
-  margin-top: 1em;
+  margin-top: var(--space-text);
 }
 
 .text a {
@@ -164,26 +178,67 @@ a {
   opacity: 1;
 }
 
-/* Coming-soon page (site/templates/coming-soon.php): one tile filling the viewport. */
+/* Coming-soon page (site/templates/coming-soon.php): a one-column card over the turning cup (src/coming-soon.js).
+   Wide screens get one screen without scrolling; on phones the card scrolls away and leaves the cup alone.
+   The page is always light (data-theme="light" on html) and sits on the tool's off-white. */
+.coming-soon-page {
+  background: var(--cup-ground);
+}
+
+.coming-soon-cup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  /* The large viewport height does not change while a phone's browser bars come and go, so the cup holds still. */
+  height: 100lvh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.coming-soon-cup.is-ready {
+  opacity: 1;
+}
+
 .coming-soon {
-  min-height: 100vh;
-  min-height: 100dvh;
-  align-content: stretch;
+  position: relative;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 100vh;
+  height: 100dvh;
 }
 
 .coming-soon .tile {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: calc(var(--gap) * 4);
+  display: grid;
+  gap: var(--space-xl);
+}
+
+.coming-soon .title {
+  margin-bottom: 0;
 }
 
 .coming-soon-body {
   display: grid;
-  gap: 1em;
+  gap: var(--space-text);
 }
 
 .coming-soon address {
   display: grid;
   font-style: normal;
+}
+
+@media (max-width: 1024px) {
+  .coming-soon {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .coming-soon {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    padding-bottom: 100svh;
+  }
 }
