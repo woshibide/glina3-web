@@ -59,6 +59,9 @@ Never use these credentials on a public server.
 - `site/config/config.127.0.0.1.php` turns on Kirby debug for local development only.
 - `src/styles/main.css` holds the base tokens from the design study; expect them to change.
   The template links it directly (not through `main.js`), so pages are styled before any script runs.
+- Spacing: `--gap` (10px) is the board grid; everything else uses the scale in `:root` of `main.css`.
+  `--space-text` is 1em; `--space-xs` to `--space-xl` follow the window width (2, 4, 8, 16, and 32 gaps on a 1440 px window), so proportions hold at every width.
+  Write `var(--space-xl)`, never `calc(var(--gap) * n)`; change sizes in that one place.
 - Page transitions are cross-document view transitions (`@view-transition` in `main.css`): a short crossfade on same-site links, off under reduced motion, instant in browsers without support.
 - Colour theme: light, system, or dark, chosen in the top bar (`src/components/ThemeSwitch.vue`, server copy in `site/snippets/theme-switch.php`, icons in `src/icons/`).
   The choice is stored in `localStorage` and applied by an inline script in the `<head>` before first paint; colours use `light-dark()`.

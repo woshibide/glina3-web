@@ -8,6 +8,18 @@
   --paper: #f4f4f4;
   --muted: 0.4;
   --gap: 10px;
+  /* Spacing scale: use these instead of multiplying --gap.
+     --gap above stays a fixed 10px: the board's grid (between tiles, tile padding, page inset).
+     Text spacing follows the type size (em).
+     Layout spacing follows the window width (vw), so it keeps the same proportion at every width;
+     one unit is --gap on a 1440 px wide window, and each step doubles. */
+  --space-text: 1em;
+  --space-unit: calc(100vw * 10 / 1440);
+  --space-xs: calc(var(--space-unit) * 2);
+  --space-s: calc(var(--space-unit) * 4);
+  --space-m: calc(var(--space-unit) * 8);
+  --space-l: calc(var(--space-unit) * 16);
+  --space-xl: calc(var(--space-unit) * 32);
   --radius-tile: 8px;
   --radius-button: 4px;
   --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -117,7 +129,7 @@ a {
 }
 
 .text > * + * {
-  margin-top: 1em;
+  margin-top: var(--space-text);
 }
 
 .text a {
@@ -193,12 +205,16 @@ a {
 
 .coming-soon .tile {
   display: grid;
-  gap: calc(var(--gap) * 4);
+  gap: var(--space-xl);
+}
+
+.coming-soon .title {
+  margin-bottom: 0;
 }
 
 .coming-soon-body {
   display: grid;
-  gap: 1em;
+  gap: var(--space-text);
 }
 
 .coming-soon address {
