@@ -1,0 +1,17 @@
+Title: About
+
+----
+
+Text:
+
+GLINA³ is an Amsterdam-based design studio working between objects, digital production, and visual culture.
+
+Using ceramic 3D printing, digital fabrication, and commissioned work as core tools, we create objects and visual systems that translate contemporary digital language into physical form.
+
+Alongside production, GLINA³ develops workshops and research-based educational experiences. These formats bring together making, visual culture, and emerging technologies. Our teaching also addresses the ethical and critical side of technology, from the use of AI in design processes to the risks of relying on systems that increasingly operate as black boxes.
+
+Across both production and education, inspired by the idea of re-enchantment of the world, GLINA³ explores how technology can become more situated, magical, and culturally resonant.
+
+----
+
+Uuid: grlmfefoo7ps6atm

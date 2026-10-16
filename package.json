@@ -1,0 +1,18 @@
+{
+  "name": "glina-www",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "vue": "3.5.44"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "6.0.10",
+    "vite": "8.3.4",
+    "vite-plugin-kirby": "5.7.1"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build"
+  }
+}

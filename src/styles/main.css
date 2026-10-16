@@ -1,0 +1,165 @@
+/* Base tokens from 1_research/design.md (antikythera study). Expect these to change.
+   Colours use light-dark(): the system preference decides unless html[data-theme] forces one. */
+:root {
+  color-scheme: light dark;
+  --ground: light-dark(#e7e7e7, #0b0b0b);
+  --tile: light-dark(#f4f4f4, #1a1a1a);
+  --ink: light-dark(#111111, #ececec);
+  --paper: #f4f4f4;
+  --muted: 0.4;
+  --gap: 10px;
+  --radius-tile: 8px;
+  --radius-button: 4px;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --size: 14px;
+  --leading: 1.3;
+  --transition: 220ms;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* Page transitions: cross-document view transitions crossfade between pages (and between themes).
+   Browsers without support navigate instantly. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--transition);
+  animation-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font: 500 var(--size) / var(--leading) var(--font);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+.board {
+  display: grid;
+  gap: var(--gap);
+  padding: var(--gap);
+  min-height: 100vh;
+  align-content: start;
+}
+
+.tile {
+  background: var(--tile);
+  border-radius: var(--radius-tile);
+  padding: var(--gap);
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap) calc(var(--gap) * 2);
+  align-items: center;
+  min-height: 43px;
+  padding-block: 0;
+}
+
+.masthead nav {
+  display: flex;
+  gap: var(--gap);
+}
+
+.masthead nav a {
+  text-decoration: none;
+  opacity: var(--muted);
+}
+
+.masthead nav a[aria-current="page"] {
+  opacity: 1;
+}
+
+.title {
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--gap);
+}
+
+.text > * + * {
+  margin-top: 1em;
+}
+
+.text a {
+  text-decoration: underline;
+}
+
+.theme-switch {
+  display: flex;
+  margin-left: auto;
+  padding: 2px;
+  gap: 2px;
+  background: var(--ground);
+  border-radius: var(--radius-button);
+}
+
+.theme-switch button {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 21px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ink);
+  opacity: var(--muted);
+  cursor: pointer;
+}
+
+.theme-switch button:hover {
+  opacity: 0.75;
+}
+
+.theme-switch button:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 1px;
+}
+
+/* Highlight follows html[data-theme], which is set before first paint, so it never flickers. */
+:root:not([data-theme]) [data-theme-option="system"],
+:root[data-theme="light"] [data-theme-option="light"],
+:root[data-theme="dark"] [data-theme-option="dark"] {
+  background: var(--tile);
+  opacity: 1;
+}

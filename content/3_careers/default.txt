@@ -1,0 +1,9 @@
+Title: Careers
+
+----
+
+Text: At GLINA³, we are always curious to meet people who share our passions. Even if there are no current openings, you're welcome to send us an open application with your CV and portfolio to (email: office@glina3.nl). We will get in touch if an opportunity arises that matches your skills and interests.
+
+----
+
+Uuid: yuxg9rpl9avtrp7y
