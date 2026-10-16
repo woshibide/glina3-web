@@ -1,4 +1,4 @@
-<?php /* Shown on every URL while the glina.comingSoon option is on (see site/config/config.php). Plain HTML, no Vue. */ ?>
+<?php /* Shown on every URL while the glina.comingSoon option is on (see site/config/config.php). Plain HTML, no Vue; src/coming-soon.js turns the cup behind the notice. */ ?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -7,8 +7,10 @@
   <title><?= esc($site->title()) ?></title>
   <meta name="description" content="<?= esc($site->title(), 'attr') ?>: 3D-printed ceramics from Amsterdam. Our new website is in the making.">
   <?= vite()->css('styles/main.css') ?>
+  <?= vite()->js('coming-soon.js') ?>
 </head>
-<body>
+<body class="coming-soon-page">
+  <canvas class="coming-soon-cup" aria-hidden="true"></canvas>
   <main class="board coming-soon">
     <div class="tile">
       <h1 class="title"><?= esc($site->title()) ?></h1>

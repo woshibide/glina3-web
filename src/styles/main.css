@@ -164,17 +164,35 @@ a {
   opacity: 1;
 }
 
-/* Coming-soon page (site/templates/coming-soon.php): one tile filling the viewport. */
+/* Coming-soon page (site/templates/coming-soon.php): a one-column card over the turning cup (src/coming-soon.js).
+   Wide screens get one screen without scrolling; on phones the card scrolls away and leaves the cup alone. */
+.coming-soon-cup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  /* The large viewport height does not change while a phone's browser bars come and go, so the cup holds still. */
+  height: 100lvh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.coming-soon-cup.is-ready {
+  opacity: 1;
+}
+
 .coming-soon {
-  min-height: 100vh;
-  min-height: 100dvh;
-  align-content: stretch;
+  position: relative;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 100vh;
+  height: 100dvh;
 }
 
 .coming-soon .tile {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
   gap: calc(var(--gap) * 4);
 }
 
@@ -186,4 +204,18 @@ a {
 .coming-soon address {
   display: grid;
   font-style: normal;
+}
+
+@media (max-width: 1024px) {
+  .coming-soon {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .coming-soon {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+    padding-bottom: 100svh;
+  }
 }
