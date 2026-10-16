@@ -11,8 +11,9 @@ Source copy of the current site: `../../0_input/GLINA3_full_website_archive_2026
 
 ## Run
 
+For cloning (with the tool submodule), see [Everyday flows](#everyday-flows).
+
 ```bash
-git clone --recurse-submodules https://github.com/woshibide/glina3-web.git
 composer install
 npm install
 npm run dev      # Kirby on http://127.0.0.1:8000 (Panel at /panel), Vite assets with hot reload
@@ -57,25 +58,79 @@ Never use these credentials on a public server.
 - Colour theme: light, system, or dark, chosen in the top bar (`src/components/ThemeSwitch.vue`, server copy in `site/snippets/theme-switch.php`, icons in `src/icons/`).
   The choice is stored in `localStorage` and applied by an inline script in the `<head>` before first paint; colours use `light-dark()`.
 
-## Git
+## Repositories and Git
 
-- `main` is production: whatever is on it can be deployed. Today it serves the coming-soon page.
-- `develop` collects the redesign. Branch features off `develop` (`feature/<name>`), merge them back, and merge `develop` into `main` to release.
+### Map
+
+| Repository | Local folder | What it is |
+| --- | --- | --- |
+| `woshibide/glina3-web` | `2_development/www` (this one) | The website: Kirby, Vue, Vite. |
+| `woshibide/glina3-tool` | `2_development/tool` | The cup tool, developed on its own. |
+| `woshibide/glina3-tool` again | `2_development/www/tool` | The same tool as a git submodule of the website, pinned to one commit. |
+| `woshibide/glina3` | none | The legacy site (static "digital card" on GitHub Pages). Read-only reference. |
+
+The tool has two checkouts on purpose:
+
+- `../tool` is where the tool is edited, tested, committed, and pushed (see `../tool/AGENTS.md`).
+- `tool/` here is only the copy the website uses.
+  Git checks it out at the pinned commit as a detached HEAD, so commits made inside it are easy to lose.
+  Do not edit there.
+
+### Branches
+
+Website (`glina3-web`):
+
+- `main` is production: whatever is on it can be deployed.
+  Today it serves the coming-soon page.
+- `develop` collects the redesign.
+  Branch features off `develop` (`feature/<name>`), merge them back, and merge `develop` into `main` to release.
 - Urgent fixes to the live site branch off `main` and are merged into both `main` and `develop`.
 
-### Cup tool submodule
+Tool (`glina3-tool`):
 
-`tool/` is the cup tool (`woshibide/glina3-tool`) as a git submodule, pinned to one commit.
-The tool is developed in its own repository (the sibling checkout `../tool`, with its own `AGENTS.md`); this repository only records which tool commit the website uses.
-`.htaccess` blocks `tool/` from the web.
+- `main` is the tool as it will ship on the website, being stripped down and revamped to fit the site.
+  The submodule tracks this branch.
+- `ux-research` parks the interaction prototype as it was before the revamp (commit `aac9252`).
+  It is not merged back; single ideas are cherry-picked from it when needed.
+
+The website's branches can pin different tool commits; `git submodule status` shows the current one.
+
+### Everyday flows
+
+New clone:
 
 ```bash
-git submodule update --init           # after a clone without --recurse-submodules, or after a pull that moved the pin
-git submodule update --remote tool    # move the pin to the tool's latest main
-git add tool && git commit -m "Update cup tool"
+git clone --recurse-submodules https://github.com/woshibide/glina3-web.git www
+git -C www config submodule.recurse true   # checkout, switch, and pull then also move tool/ to the pinned commit
+git clone https://github.com/woshibide/glina3-tool.git tool   # next to www, for editing the tool
 ```
 
-Push tool commits to `glina3-tool` before committing a new pin here, or other clones cannot check it out.
+Without `submodule.recurse`, run `git submodule update` after every branch switch or pull; otherwise `tool/` keeps the old commit and `git status` shows `modified: tool`.
+
+Change the tool and use it in the website:
+
+```bash
+cd ../tool                   # on main
+# edit, npm test, commit
+git push                     # push first, or other clones cannot check out the new pin
+cd ../www                    # on develop
+git submodule update --remote tool
+git add tool && git commit -m "Update cup tool"
+git push
+```
+
+Change the website: branch off `develop`, commit, merge back into `develop`, push.
+
+Release: merge `develop` into `main`, push, deploy `main`.
+
+### Running both at once
+
+Both dev servers default to port 5173, and the website's Vite server needs exactly that port.
+Start the tool on another one: `npm run start -- --port 4173` in `../tool`.
+
+### Web access
+
+`.htaccess` blocks `tool/` from the web; only the website's own build in `dist/` is served.
 
 ## Deploy
 
