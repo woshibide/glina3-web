@@ -163,3 +163,27 @@ a {
   background: var(--tile);
   opacity: 1;
 }
+
+/* Coming-soon page (site/templates/coming-soon.php): one tile filling the viewport. */
+.coming-soon {
+  min-height: 100vh;
+  min-height: 100dvh;
+  align-content: stretch;
+}
+
+.coming-soon .tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(var(--gap) * 4);
+}
+
+.coming-soon-body {
+  display: grid;
+  gap: 1em;
+}
+
+.coming-soon address {
+  display: grid;
+  font-style: normal;
+}

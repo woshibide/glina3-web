@@ -15,3 +15,9 @@ columns:
           email:
             type: email
             required: true
+          phone:
+            type: tel
+          address:
+            type: textarea
+            buttons: false
+            size: small

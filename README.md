@@ -12,6 +12,7 @@ Source copy of the current site: `../../0_input/GLINA3_full_website_archive_2026
 ## Run
 
 ```bash
+git clone --recurse-submodules https://github.com/woshibide/glina3-web.git
 composer install
 npm install
 npm run dev      # Kirby on http://127.0.0.1:8000 (Panel at /panel), Vite assets with hot reload
@@ -21,6 +22,14 @@ npm run build    # production assets into dist/ (Kirby serves them when no dev s
 Open the Kirby URL, not the Vite one.
 Do not run `npm run build` while `npm run dev` is running: `vite-plugin-kirby` deletes the `.dev` flag on build, which switches the running site to the production assets.
 Restart `npm run dev` afterwards if you did.
+
+## Coming-soon page
+
+While the `glina.comingSoon` option is `true` (in `site/config/config.php`), every URL shows `site/templates/coming-soon.php` and other paths redirect to `/`.
+The Panel keeps working, and logged-in Panel users see the real site, so content can be prepared on the live server.
+Locally, `site/config/config.127.0.0.1.php` turns the option off; the page is still at http://127.0.0.1:8000/coming-soon (debug only).
+Email, phone, and address come from the site fields in the Panel.
+To launch the full site, set the option to `false` (or remove it with the routes) on `main`.
 
 ## Local Panel account
 
@@ -48,7 +57,27 @@ Never use these credentials on a public server.
 - Colour theme: light, system, or dark, chosen in the top bar (`src/components/ThemeSwitch.vue`, server copy in `site/snippets/theme-switch.php`, icons in `src/icons/`).
   The choice is stored in `localStorage` and applied by an inline script in the `<head>` before first paint; colours use `light-dark()`.
 
+## Git
+
+- `main` is production: whatever is on it can be deployed. Today it serves the coming-soon page.
+- `develop` collects the redesign. Branch features off `develop` (`feature/<name>`), merge them back, and merge `develop` into `main` to release.
+- Urgent fixes to the live site branch off `main` and are merged into both `main` and `develop`.
+
+### Cup tool submodule
+
+`tool/` is the cup tool (`woshibide/glina3-tool`) as a git submodule, pinned to one commit.
+The tool is developed in its own repository (the sibling checkout `../tool`, with its own `AGENTS.md`); this repository only records which tool commit the website uses.
+`.htaccess` blocks `tool/` from the web.
+
+```bash
+git submodule update --init           # after a clone without --recurse-submodules, or after a pull that moved the pin
+git submodule update --remote tool    # move the pin to the tool's latest main
+git add tool && git commit -m "Update cup tool"
+```
+
+Push tool commits to `glina3-tool` before committing a new pin here, or other clones cannot check it out.
+
 ## Deploy
 
-Run `composer install --no-dev` and `npm ci && npm run build`, then upload everything except `node_modules/`.
+Run `composer install --no-dev` and `npm ci && npm run build`, then upload everything except `node_modules/` and `tool/`.
 A Kirby license is required on a public domain.

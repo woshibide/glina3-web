@@ -1,0 +1,4 @@
+[submodule "tool"]
+	path = tool
+	url = https://github.com/woshibide/glina3-tool.git
+	branch = main
