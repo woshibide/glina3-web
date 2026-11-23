@@ -17,10 +17,10 @@ return [
 
     'routes' => [
         [
-            // Local preview of the coming-soon page while the option is off; only with debug on.
+            // Keep the coming-soon template available to local development and the static exporter.
             'pattern' => 'coming-soon',
             'action'  => function () use ($comingSoon) {
-                if (option('debug') !== true) {
+                if (option('debug') !== true && option('glina.staticPreview') !== true) {
                     $this->next();
                 }
 

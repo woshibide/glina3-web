@@ -1,63 +1,98 @@
-// Local development: Kirby on http://127.0.0.1:8000 (PHP built-in server) plus the Vite dev server for assets.
-// Open the Kirby URL; Vite injects hot-reloading assets into it. Ctrl+C stops both.
-import { spawn } from "node:child_process";
-import { rmSync } from "node:fs";
+import { spawn, spawnSync } from "node:child_process";
+import { existsSync, rmSync } from "node:fs";
 import { createServer as createNetServer } from "node:net";
-import { createServer } from "vite";
 
 const HOST = "127.0.0.1";
-const KIRBY_PORT = 8000;
-const VITE_PORT = 5173;
 
-function portIsFree(port) {
-  return new Promise((resolve) => {
-    const probe = createNetServer()
-      .once("error", () => resolve(false))
-      .once("listening", () => probe.close(() => resolve(true)))
-      .listen(port, HOST);
-  });
-}
-
-// Check both ports before Vite starts: a second instance must exit without touching the
-// running instance's .dev flag file (vite-plugin-kirby deletes it on exit).
-for (const port of [KIRBY_PORT, VITE_PORT]) {
-  if (!(await portIsFree(port))) {
-    console.error(`Port ${port} is already in use. Is another \`npm run dev\` running?`);
-    process.exit(1);
+function portFromEnvironment(name, fallback) {
+  const value = process.env[name] ?? String(fallback);
+  const port = Number(value);
+  if (!/^\d+$/.test(value) || port < 1 || port > 65535) {
+    throw new Error(`${name} must be a port between 1 and 65535.`);
   }
+  return port;
 }
 
-// Registered before vite-plugin-kirby's own handlers, which call process.exit(signalName) and crash on Node 26.
-let stopping = false;
-for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
-  process.on(signal, () => {
-    stopping = true;
-    process.exit(0);
+function checkPort(port) {
+  return new Promise((resolve, reject) => {
+    const probe = createNetServer();
+    probe.once("error", reject);
+    probe.listen(port, HOST, () => probe.close(resolve));
   });
 }
-// Kirby serves production assets once this flag file is gone, so remove it synchronously on any exit.
-process.on("exit", () => rmSync(".dev", { force: true }));
+
+function startPhp(port) {
+  const php = spawn("php", ["-S", `${HOST}:${port}`, "scripts/dev-router.php"], {
+    stdio: ["ignore", "ignore", "pipe"],
+  });
+  process.on("exit", () => php.kill());
+  return new Promise((resolve, reject) => {
+    php.once("error", reject);
+    let listening = false;
+    php.stderr.on("data", (chunk) => {
+      for (const line of chunk.toString().split("\n")) {
+        if (/Development Server .* started/.test(line)) {
+          listening = true;
+          resolve();
+        } else if (/PHP (Warning|Fatal|Parse|Notice|Deprecated)|Failed to listen/.test(line)) {
+          console.error(line);
+        }
+      }
+    });
+    php.once("exit", (code, signal) => {
+      const error = new Error(`PHP server exited (${signal ?? code}).`);
+      if (!listening) {
+        reject(error);
+      } else {
+        console.error(error.message);
+        process.exit(1);
+      }
+    });
+  });
+}
 
 try {
-  const vite = await createServer({ configFile: "vite.config.js" });
+  const phpPort = portFromEnvironment("GLINA_PHP_PORT", 8000);
+  const vitePort = portFromEnvironment("GLINA_VITE_PORT", 5173);
+  if (phpPort === vitePort) throw new Error("Choose different PHP and Vite ports.");
+
+  const phpVersion = spawnSync("php", ["-r", "echo PHP_VERSION;"], { encoding: "utf8" });
+  if (phpVersion.status !== 0 || !/^8\.[2-5]\./.test(phpVersion.stdout)) {
+    throw new Error(`Select PHP 8.2–8.5 on PATH (PHP 8.5 recommended). Found: ${phpVersion.stdout || "no working php binary"}.`);
+  }
+  if (!existsSync("vendor/autoload.php") || !existsSync("kirby/router.php")) {
+    throw new Error("Kirby dependencies are missing. Run composer install.");
+  }
+  if (!existsSync("tool/package.json")) {
+    throw new Error("Cup tool is missing. Run git submodule update --init --recursive.");
+  }
+  if (!existsSync("node_modules/vite/package.json") || !existsSync("node_modules/glina-cup-tool/package.json")) {
+    throw new Error("Frontend dependencies are missing. Run npm ci.");
+  }
+  if (existsSync(".dev")) {
+    throw new Error("A Vite dev flag already exists. Stop the running dev server or remove the stale .dev file.");
+  }
+
+  for (const port of [phpPort, vitePort]) {
+    try {
+      await checkPort(port);
+    } catch (error) {
+      throw new Error(`Cannot bind ${HOST}:${port} (${error.code}).`);
+    }
+  }
+
+  // Register before the Vite plugin installs its own signal handlers.
+  for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
+    process.on(signal, () => process.exit(0));
+  }
+  const { createServer } = await import("vite");
+  await startPhp(phpPort);
+  process.on("exit", () => rmSync(".dev", { force: true }));
+  const vite = await createServer({ server: { port: vitePort } });
   await vite.listen();
+
+  console.log(`\n  Site:  http://${HOST}:${phpPort}\n  Panel: http://${HOST}:${phpPort}/panel\n`);
 } catch (error) {
   console.error(error.message);
   process.exit(1);
 }
-
-const php = spawn("php", ["-S", `${HOST}:${KIRBY_PORT}`, "kirby/router.php"], { stdio: ["ignore", "ignore", "pipe"] });
-php.stderr.on("data", (chunk) => {
-  // The PHP server logs every request to stderr; only surface warnings and errors.
-  for (const line of chunk.toString().split("\n")) {
-    if (/PHP (Warning|Fatal|Parse|Notice|Deprecated)|Failed to listen/.test(line)) console.error(line);
-  }
-});
-php.on("exit", (code) => {
-  if (stopping) return;
-  console.error(`PHP server exited (code ${code}).`);
-  process.exit(1);
-});
-process.on("exit", () => php.kill());
-
-console.log(`\n  Site:  http://${HOST}:${KIRBY_PORT}\n  Panel: http://${HOST}:${KIRBY_PORT}/panel\n`);

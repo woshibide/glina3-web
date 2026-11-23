@@ -56,3 +56,7 @@ Icon
 /dist
 /.dev
 /site/config/vite.config.php
+/pages-dist
+/.pages-build-*
+/.pages-build.lock
+/.panel-local.json

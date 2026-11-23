@@ -6,29 +6,37 @@ Source copy of the current site: `../../0_input/GLINA3_full_website_archive_2026
 
 ## Requirements
 
-- PHP 8.2 to 8.5 and Composer
-- Node 22 or newer
+- PHP 8.5 and Composer.
+- Node 24 (`nvm use`).
+
+On macOS, install `php@8.5` with Homebrew and run `export PATH="$(brew --prefix php@8.5)/bin:$PATH"` in the shell you use for Composer.
+Check `php -v` before installing dependencies.
 
 ## Run
 
 For cloning (with the tool submodule), see [Everyday flows](#everyday-flows).
 
 ```bash
+git submodule update --init --recursive
 composer install
-npm install
-npm run dev      # Kirby on http://127.0.0.1:8000 (Panel at /panel), Vite assets with hot reload
-npm run build    # production assets into dist/ (Kirby serves them when no dev server runs)
+npm ci
+composer check
+composer panel:setup
+composer start
 ```
 
-Open the Kirby URL, not the Vite one.
-Do not run `npm run build` while `npm run dev` is running: `vite-plugin-kirby` deletes the `.dev` flag on build, which switches the running site to the production assets.
-Restart `npm run dev` afterwards if you did.
+Open http://127.0.0.1:8000 for Kirby and http://127.0.0.1:8000/panel for the Panel.
+Vite serves assets at http://127.0.0.1:5173.
+Set `GLINA_PHP_PORT` and `GLINA_VITE_PORT` before `composer start` if another project uses either port.
+Stop the dev server before using `npm run build` or `composer build`.
+If a dev server was killed and left `.dev` behind, remove the flag after checking the server has stopped.
 
 ## Coming-soon page
 
 While the `glina.comingSoon` option is `true` (in `site/config/config.php`), every URL shows `site/templates/coming-soon.php` and other paths redirect to `/`.
 The Panel keeps working, and logged-in Panel users see the real site, so content can be prepared on the live server.
-Locally, `site/config/config.127.0.0.1.php` turns the option off; the page is still at http://127.0.0.1:8000/coming-soon (debug only).
+Locally, `site/config/config.127.0.0.1.php` turns the option off.
+The page is still at http://127.0.0.1:8000/coming-soon, and Pages exports it at `/coming-soon/`.
 Email, phone, and address come from the site fields in the Panel.
 The notice is a one-column card over the cup from the tool, which turns behind it in a full-window canvas (`src/coming-soon.js`, styles at the end of `src/styles/main.css`).
 The page is always light, on the tool's off-white (`--cup-ground`), whatever the system theme.
@@ -40,12 +48,9 @@ To launch the full site, set the option to `false` (or remove it with the routes
 
 Panel: http://127.0.0.1:8000/panel
 
-- Email: `test@test.test`
-- Password: `1q2w3e4r`
-
-This account is for local development only.
-Accounts live in `site/accounts/`, which is git-ignored, so each machine creates its own on the first Panel visit.
-Never use these credentials on a public server.
+`composer panel:setup` creates the local editor `test@test.test` and saves the generated password in the ignored `.panel-local.json` file.
+Kirby stores the account in the ignored `site/accounts/` directory.
+Running setup again preserves the existing account and password.
 
 ## How it fits together
 
@@ -91,7 +96,7 @@ Website (`glina3-web`):
 
 - `main` is production: whatever is on it can be deployed.
   Today it serves the coming-soon page.
-- `develop` collects the redesign.
+- `develop` collects the redesign and publishes the static GitHub Pages preview.
   Branch features off `develop` (`feature/<name>`), merge them back, and merge `develop` into `main` to release.
 - Urgent fixes to the live site branch off `main` and are merged into both `main` and `develop`.
 
@@ -130,7 +135,8 @@ git push
 
 Change the website: branch off `develop`, commit, merge back into `develop`, push.
 
-Release: merge `develop` into `main`, push, deploy `main`.
+Release through a PR from `develop` to `main` after design approval.
+Record the reviewed Pages commit in the PR and recheck the preview if design changes land before merge.
 
 ### Running both at once
 
@@ -141,7 +147,21 @@ Start the tool on another one: `npm run start -- --port 4173` in `../tool`.
 
 `.htaccess` blocks `tool/` from the web; only the website's own build in `dist/` is served.
 
-## Deploy
+## Design preview
+
+Build a local export with `SITE_URL=http://127.0.0.1:8080/glina3-web/ composer build`.
+Serve `pages-dist/` at that path with a static server configured to use `404.html` for missing routes.
+The export renders published Kirby content and the coming-soon card, with public media and compiled Vite assets.
+The Panel and API require the local or live Kirby server.
+
+After approval to publish, set the Pages source to **GitHub Actions** and allow only `develop` in the `github-pages` deployment environment.
+The next push to `develop` runs source and Chromium checks before publishing to `https://woshibide.github.io/glina3-web/`.
+If the tool repository is private, set `GLINA_SUBMODULE_TOKEN` to a read-only checkout credential with access to both repos.
+The workflow uses the configured Pages URL automatically when a custom domain is connected.
+
+## Live Kirby
 
 Build from a clone with the `tool/` submodule checked out (the build bundles it): run `composer install --no-dev` and `npm ci && npm run build`, then upload everything except `node_modules/` and `tool/`.
 A Kirby license is required on a public domain.
+Connect fortrabbit to `main` when live deployment is approved and use its assigned HTTPS URL.
+Verify that deployment preserves live content, media, accounts, and sessions.
