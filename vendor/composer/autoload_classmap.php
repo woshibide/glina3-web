@@ -264,6 +264,7 @@ return array(
     'Kirby\\Image\\Image' => $baseDir . '/kirby/src/Image/Image.php',
     'Kirby\\Image\\Location' => $baseDir . '/kirby/src/Image/Location.php',
     'Kirby\\Image\\QrCode' => $baseDir . '/kirby/src/Image/QrCode.php',
+    'Kirby\\Image\\Svg' => $baseDir . '/kirby/src/Image/Svg.php',
     'Kirby\\Option\\Option' => $baseDir . '/kirby/src/Option/Option.php',
     'Kirby\\Option\\Options' => $baseDir . '/kirby/src/Option/Options.php',
     'Kirby\\Option\\OptionsApi' => $baseDir . '/kirby/src/Option/OptionsApi.php',

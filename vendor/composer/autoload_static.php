@@ -17,11 +17,11 @@ class ComposerStaticInitda1c3a8eb3e9e3b252ad405f32a3f585
     );
 
     public static $prefixLengthsPsr4 = array (
-        'W' =>
+        'W' => 
         array (
             'Whoops\\' => 7,
         ),
-        'S' =>
+        'S' => 
         array (
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
@@ -29,108 +29,108 @@ class ComposerStaticInitda1c3a8eb3e9e3b252ad405f32a3f585
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Yaml\\' => 23,
         ),
-        'P' =>
+        'P' => 
         array (
             'Psr\\Log\\' => 8,
             'PHPMailer\\PHPMailer\\' => 20,
         ),
-        'L' =>
+        'L' => 
         array (
             'League\\ColorExtractor\\' => 22,
             'Laminas\\Escaper\\' => 16,
         ),
-        'K' =>
+        'K' => 
         array (
             'Kirby\\' => 6,
         ),
-        'C' =>
+        'C' => 
         array (
             'Composer\\Semver\\' => 16,
         ),
-        'B' =>
+        'B' => 
         array (
             'Base32\\' => 7,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Whoops\\' =>
+        'Whoops\\' => 
         array (
             0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
         ),
-        'Symfony\\Polyfill\\Mbstring\\' =>
+        'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
         ),
-        'Symfony\\Polyfill\\Intl\\Normalizer\\' =>
+        'Symfony\\Polyfill\\Intl\\Normalizer\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer',
         ),
-        'Symfony\\Polyfill\\Intl\\Idn\\' =>
+        'Symfony\\Polyfill\\Intl\\Idn\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
-        'Symfony\\Polyfill\\Ctype\\' =>
+        'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Component\\Yaml\\' =>
+        'Symfony\\Component\\Yaml\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/yaml',
         ),
-        'Psr\\Log\\' =>
+        'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/src',
         ),
-        'PHPMailer\\PHPMailer\\' =>
+        'PHPMailer\\PHPMailer\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
-        'League\\ColorExtractor\\' =>
+        'League\\ColorExtractor\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/color-extractor/src',
         ),
-        'Laminas\\Escaper\\' =>
+        'Laminas\\Escaper\\' => 
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
-        'Kirby\\' =>
+        'Kirby\\' => 
         array (
             0 => __DIR__ . '/../..' . '/kirby/src',
             1 => __DIR__ . '/..' . '/getkirby/composer-installer/src',
         ),
-        'Composer\\Semver\\' =>
+        'Composer\\Semver\\' => 
         array (
             0 => __DIR__ . '/..' . '/composer/semver/src',
         ),
-        'Base32\\' =>
+        'Base32\\' => 
         array (
             0 => __DIR__ . '/..' . '/christian-riesen/base32/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'c' =>
+        'c' => 
         array (
-            'claviska' =>
+            'claviska' => 
             array (
                 0 => __DIR__ . '/..' . '/claviska/simpleimage/src',
             ),
         ),
-        'P' =>
+        'P' => 
         array (
-            'ParsedownExtra' =>
+            'ParsedownExtra' => 
             array (
                 0 => __DIR__ . '/..' . '/erusev/parsedown-extra',
             ),
-            'Parsedown' =>
+            'Parsedown' => 
             array (
                 0 => __DIR__ . '/..' . '/erusev/parsedown',
             ),
         ),
-        'M' =>
+        'M' => 
         array (
-            'Michelf' =>
+            'Michelf' => 
             array (
                 0 => __DIR__ . '/..' . '/michelf/php-smartypants',
             ),
@@ -396,6 +396,7 @@ class ComposerStaticInitda1c3a8eb3e9e3b252ad405f32a3f585
         'Kirby\\Image\\Image' => __DIR__ . '/../..' . '/kirby/src/Image/Image.php',
         'Kirby\\Image\\Location' => __DIR__ . '/../..' . '/kirby/src/Image/Location.php',
         'Kirby\\Image\\QrCode' => __DIR__ . '/../..' . '/kirby/src/Image/QrCode.php',
+        'Kirby\\Image\\Svg' => __DIR__ . '/../..' . '/kirby/src/Image/Svg.php',
         'Kirby\\Option\\Option' => __DIR__ . '/../..' . '/kirby/src/Option/Option.php',
         'Kirby\\Option\\Options' => __DIR__ . '/../..' . '/kirby/src/Option/Options.php',
         'Kirby\\Option\\OptionsApi' => __DIR__ . '/../..' . '/kirby/src/Option/OptionsApi.php',
