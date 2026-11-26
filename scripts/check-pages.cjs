@@ -105,15 +105,19 @@ async function checkFallbacks(browser, url) {
   }
 }
 
-async function checkSite(browser, site) {
-  const page = await browser.newPage();
+function collectPageErrors(page) {
   const failures = [];
   page.on("pageerror", (error) => failures.push(error.message));
   page.on("requestfailed", (request) => failures.push(request.url()));
   page.on("response", (response) => {
     if (response.status() >= 400) failures.push(response.url());
   });
+  return failures;
+}
 
+async function checkSite(browser, site) {
+  const page = await browser.newPage();
+  const failures = collectPageErrors(page);
   for (const slug of ["", "about/", "collaborate/", "careers/"]) {
     assert.equal((await page.goto(site + slug)).status(), 200);
     await page.locator(".board h1").waitFor();
@@ -126,19 +130,20 @@ async function checkSite(browser, site) {
   assert.equal((await page.goto(site + "coming-soon/")).status(), 200);
   await page.locator(".coming-soon-cup.is-ready").waitFor({ timeout: 60_000 });
   assert.deepEqual(failures, []);
+  await page.close();
 
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.reload();
-  const canvas = page.locator(".coming-soon-cup.is-ready");
+  const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: "reduce" });
+  const mobileFailures = collectPageErrors(mobile);
+  assert.equal((await mobile.goto(site + "coming-soon/", { waitUntil: "domcontentloaded" })).status(), 200);
+  const canvas = mobile.locator(".coming-soon-cup.is-ready");
   await canvas.waitFor({ timeout: 60_000 });
   // Wait until the ready fade has finished before comparing the canvas frames.
   await canvas.evaluate((element) => Promise.all(element.getAnimations().map((animation) => animation.finished)));
   const first = await canvas.screenshot({ animations: "disabled" });
-  await page.waitForTimeout(300);
+  await mobile.waitForTimeout(300);
   assert.deepEqual(await canvas.screenshot({ animations: "disabled" }), first);
-  assert.deepEqual(failures, []);
-  await page.close();
+  assert.deepEqual(mobileFailures, []);
+  await mobile.close();
 
   await checkDrawing(browser, site + "coming-soon/");
   await checkFallbacks(browser, site + "coming-soon/");
