@@ -34,7 +34,16 @@
   "scripts": {
     "start": [
       "Composer\\Config::disableProcessTimeout",
-      "@php -S localhost:8000 kirby/router.php"
-    ]
+      "npm run dev"
+    ],
+    "check": [
+      "@composer check-platform-reqs",
+      "@php scripts/check.php"
+    ],
+    "build": [
+      "Composer\\Config::disableProcessTimeout",
+      "@php scripts/build-pages.php"
+    ],
+    "panel:setup": "@php scripts/setup-panel.php"
   }
 }

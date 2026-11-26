@@ -1,0 +1,12 @@
+title: Editor
+
+permissions:
+  access:
+    languages: false
+    system: false
+    users: false
+  languages: false
+  users: false
+  user:
+    changeRole: false
+    delete: false

@@ -38,6 +38,9 @@ RewriteRule ^kirby/(.*) index.php [L]
 # block the cup tool submodule sources (development only, not served)
 RewriteRule ^tool/(.*) index.php [L]
 
+# Block build tooling and the separate static review output.
+RewriteRule ^(?:scripts|pages-dist|node_modules|vendor|src)(?:/|$) - [F,L]
+
 # make site links work
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

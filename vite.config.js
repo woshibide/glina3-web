@@ -7,7 +7,7 @@ import kirby from "vite-plugin-kirby";
 // vite-plugin-kirby writes site/config/vite.config.php and the .dev flag file that Kirby reads.
 export default defineConfig(({ mode }) => ({
   root: "src",
-  base: mode === "development" ? "/" : "/dist/",
+  base: mode === "development" ? "/" : "./",
   server: { host: "127.0.0.1", port: 5173, strictPort: true },
   build: {
     outDir: "../dist",
