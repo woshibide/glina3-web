@@ -185,6 +185,21 @@ a {
   background: var(--cup-ground);
 }
 
+.coming-soon-page .cup-loader {
+  z-index: 1;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.coming-soon-page .cup-loader small {
+  margin: 0;
+  transform: none;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
 .coming-soon-cup {
   position: fixed;
   top: 0;
@@ -205,6 +220,7 @@ a {
 
 .coming-soon {
   position: relative;
+  z-index: 2;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   height: 100vh;
   height: 100dvh;
@@ -231,14 +247,31 @@ a {
 
 @media (max-width: 1024px) {
   .coming-soon {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Leave room to read all three digits when the counter reaches 100%. */
+    grid-template-columns: minmax(0, calc(50% - 3.5rem)) minmax(0, 1fr);
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px) and (orientation: portrait) {
   .coming-soon {
     grid-template-columns: minmax(0, 1fr);
     height: auto;
     padding-bottom: 100svh;
+  }
+
+  .coming-soon .tile {
+    gap: clamp(0px, calc(50svh - 15rem), var(--space-xl));
+  }
+}
+
+@media (max-height: 480px) and (orientation: landscape) {
+  .coming-soon .tile {
+    gap: var(--space-text);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coming-soon-page .coming-soon-cup {
+    transition: none;
   }
 }

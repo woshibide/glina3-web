@@ -7,9 +7,11 @@
   <title><?= esc($site->title()) ?></title>
   <meta name="description" content="<?= esc($site->title(), 'attr') ?>: 3D-printed ceramics from Amsterdam. Our new website is in the making.">
   <?= vite()->css('styles/main.css') ?>
+  <?= vite()->css('coming-soon.js') ?>
   <?= vite()->js('coming-soon.js') ?>
 </head>
 <body class="coming-soon-page">
+  <div class="cup-loader" role="progressbar" aria-label="Loading cup" aria-valuenow="0" hidden><span>0</span><small>%</small></div>
   <canvas class="coming-soon-cup" aria-hidden="true"></canvas>
   <main class="board coming-soon">
     <div class="tile">

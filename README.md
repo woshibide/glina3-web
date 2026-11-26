@@ -41,7 +41,12 @@ Email, phone, and address come from the site fields in the Panel.
 The notice is a one-column card over the cup from the tool, which turns behind it in a full-window canvas (`src/coming-soon.js`, styles at the end of `src/styles/main.css`).
 The page is always light, on the tool's off-white (`--cup-ground`), whatever the system theme.
 On wide screens the page fits one screen and does not scroll; on phones the card scrolls away and leaves only the cup.
-Without WebGL the page shows the card alone.
+The notice and its contact links appear immediately.
+A centered percentage advances with the surface bake and disappears after the first finished frame.
+The cup uses the cursive “Work in Progress” drawing (`tool/artwork/2.png`) for both the raised wall and glazed surface.
+The [artwork guide](tool/artwork/README.md) describes mask dimensions and orientation.
+An unreadable drawing falls back to plain glaze.
+Without JavaScript, WebGL, or a working bake worker, the page shows the card alone.
 To launch the full site, set the option to `false` (or remove it with the routes) on `main`.
 
 ## Local Panel account
@@ -78,14 +83,14 @@ Running setup again preserves the existing account and password.
 
 | Repository | Local folder | What it is |
 | --- | --- | --- |
-| `woshibide/glina3-web` | `2_development/www` (this one) | The website: Kirby, Vue, Vite. |
-| `woshibide/glina3-tool` | `2_development/tool` | The cup tool, developed on its own. |
-| `woshibide/glina3-tool` again | `2_development/www/tool` | The same tool as a git submodule of the website, pinned to one commit. |
+| `woshibide/glina3-web` | `glina3-web` (this one) | The website: Kirby, Vue, Vite. |
+| `woshibide/glina3-tool` | `glina3-tool` | The cup tool, developed on its own. |
+| `woshibide/glina3-tool` again | `glina3-web/tool` | The same tool as a git submodule of the website, pinned to one commit. |
 | `woshibide/glina3` | none | The legacy site (static "digital card" on GitHub Pages). Read-only reference. |
 
 The tool has two checkouts on purpose:
 
-- `../tool` is where the tool is edited, tested, committed, and pushed (see `../tool/AGENTS.md`).
+- `../glina3-tool` is where the tool is edited, tested, committed, and pushed (see `../glina3-tool/AGENTS.md`).
 - `tool/` here is only the copy the website uses.
   Git checks it out at the pinned commit as a detached HEAD, so commits made inside it are easy to lose.
   Do not edit there.
@@ -114,9 +119,9 @@ The website's branches can pin different tool commits; `git submodule status` sh
 New clone:
 
 ```bash
-git clone --recurse-submodules https://github.com/woshibide/glina3-web.git www
-git -C www config submodule.recurse true   # checkout, switch, and pull then also move tool/ to the pinned commit
-git clone https://github.com/woshibide/glina3-tool.git tool   # next to www, for editing the tool
+git clone --recurse-submodules https://github.com/woshibide/glina3-web.git glina3-web
+git -C glina3-web config submodule.recurse true   # checkout, switch, and pull then also move tool/ to the pinned commit
+git clone https://github.com/woshibide/glina3-tool.git glina3-tool   # next to glina3-web, for editing the tool
 ```
 
 Without `submodule.recurse`, run `git submodule update` after every branch switch or pull; otherwise `tool/` keeps the old commit and `git status` shows `modified: tool`.
@@ -124,11 +129,13 @@ Without `submodule.recurse`, run `git submodule update` after every branch switc
 Change the tool and use it in the website:
 
 ```bash
-cd ../tool                   # on main
+cd ../glina3-tool                   # on main
 # edit, npm test, commit
-git push                     # push first, or other clones cannot check out the new pin
-cd ../www                    # on develop
-git submodule update --remote tool
+reviewed=$(git rev-parse HEAD)
+git push origin main          # publish the tested revision first
+cd ../glina3-web                    # on develop
+git -C tool fetch origin main
+git -C tool checkout --detach "$reviewed"
 git add tool && git commit -m "Update cup tool"
 git push
 ```
@@ -141,7 +148,7 @@ Record the reviewed Pages commit in the PR and recheck the preview if design cha
 ### Running both at once
 
 Both dev servers default to port 5173, and the website's Vite server needs exactly that port.
-Start the tool on another one: `npm run start -- --port 4173` in `../tool`.
+Start the tool on another one: `npm run start -- --port 4173` in `../glina3-tool`.
 
 ### Web access
 
